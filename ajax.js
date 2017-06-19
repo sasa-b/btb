@@ -9,9 +9,11 @@ function Xhr(config) {
     this.responseType = null;
     this.headers = null;
     var action = '';
+    var formHandler = null;
 
     this.setAction = function (url) {
         action = url;
+        return this;
     }
 
     /**
@@ -74,7 +76,7 @@ function Xhr(config) {
     }
 
     this.getCsrfToken = function () {
-        return document.getElementsByName('_token')[0].value
+        return document.getElementsByName('csrf')[0].value
     }
 
     this.configure = function() {
@@ -179,8 +181,8 @@ function Xhr(config) {
             case 'POST':
             case 'PUT':
             case 'PATCH':
-                break;
                 self.xhr.send(data);
+                break;
             default:
                 self.xhr.send();
                 break;
@@ -193,9 +195,14 @@ function Xhr(config) {
      * @returns {*}
      */
     var prepareData = function(data) {
-        if (this.contentType.indexOf('json') > -1) {
+        if (typeof data === 'undefined' && formHandler) {
+            formHandler.collect();
+            data = formHandler.getData();
+        }
+
+        if (self.contentType.indexOf('json') > -1) {
             data = JSON.stringify(data);
-        } else if (this.contentType.indexOf('x-www-form-urlencoded') > -1) {
+        } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
             var keyValue = [];
             for (var key in data) {
                 keyValue.push(key+"="+data[key]);
@@ -203,6 +210,7 @@ function Xhr(config) {
             keyValue = keyValue.join('&');
             data = keyValue;
         }
+
         return data;
     }
 
@@ -264,6 +272,9 @@ function Xhr(config) {
     var construct = function(config, self) {
         for (var key in config) {
             self[key] = config[key];
+            if (key === 'form') {
+                formHandler = config[key];
+            }
         }
     }(config, this);
 
