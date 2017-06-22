@@ -23,10 +23,10 @@ function Xhr(config) {
     this.url = function(base) {
         if (typeof base !== 'undefined') {
             var url = window.location.href;
-                url = url.split('/');
-                url = url[2];
-                //console.log(url);
-                return 'http://' + url.replace(/\/+$/, '');
+            url = url.split('/');
+            url = url[2];
+            //console.log(url);
+            return 'http://' + url.replace(/\/+$/, '');
         }
         var url = window.location.href;
         return url.replace(/\/+$/, '');
@@ -120,60 +120,60 @@ function Xhr(config) {
             //startLoadingAnim()
             self.loading();
             switch (self.xhr.readyState) {
-                 //UNSENT
-                 case 0:
-                     if (typeof callback !== 'undefined' && callback.hasOwnProperty('unsent')) {
-                         callback.unsent();
-                     }
-                     break;
-                 //OPENED
-                 case 1:
-                     if (typeof callback !== 'undefined' && callback.hasOwnProperty('opened')) {
-                         callback.opened();
-                     }
-                     break;
-                 //HEADERS_RECEIVED
-                 case 2:
-                     if (typeof callback !== 'undefined' && callback.hasOwnProperty('headersReceived')) {
-                         callback.headersReceived();
-                     }
-                     break;
-                 //LOADING
-                 case 3:
-                     if (typeof callback !== 'undefined' && callback.hasOwnProperty('loading')) {
-                         callback.loading();
-                     }
-                     break;
-                 //DONE
-                 case 4:
-                     //stopLoadingAnim()
-                     self.stopLoading();
+                //UNSENT
+                case 0:
+                    if (typeof callback !== 'undefined' && callback.hasOwnProperty('unsent')) {
+                        callback.unsent();
+                    }
+                    break;
+                //OPENED
+                case 1:
+                    if (typeof callback !== 'undefined' && callback.hasOwnProperty('opened')) {
+                        callback.opened();
+                    }
+                    break;
+                //HEADERS_RECEIVED
+                case 2:
+                    if (typeof callback !== 'undefined' && callback.hasOwnProperty('headersReceived')) {
+                        callback.headersReceived();
+                    }
+                    break;
+                //LOADING
+                case 3:
+                    if (typeof callback !== 'undefined' && callback.hasOwnProperty('loading')) {
+                        callback.loading();
+                    }
+                    break;
+                //DONE
+                case 4:
+                    //stopLoadingAnim()
+                    self.stopLoading();
 
-                     if (self.xhr.response) {
-                         self.xhr.response.code = self.xhr.status;
-                     }
+                    if (self.xhr.response) {
+                        self.xhr.response.code = self.xhr.status;
+                    }
 
-                     if (self.xhr.status == 200) {
-                         self.successResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
-                     }
+                    if (self.xhr.status == 200) {
+                        self.successResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
+                    }
 
-                     if (self.xhr.status == 422) {
-                         self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
-                     }
+                    if (self.xhr.status == 422) {
+                        self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
+                    }
 
-                     if (self.xhr.status == 500) {
-                         self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
-                     }
+                    if (self.xhr.status == 500) {
+                        self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
+                    }
 
-                     if (self.xhr.status == 401) {
-                         self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
-                     }
+                    if (self.xhr.status == 401) {
+                        self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
+                    }
 
-                     if (self.xhr.status == 403) {
-                         self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
-                     }
-                     break;
-             }
+                    if (self.xhr.status == 403) {
+                        self.failedResponse(self.xhr.response, typeof callback !== 'undefined' &&  callback.hasOwnProperty('done') ? callback.done : (callback !== 'undefined' ? callback : 'undefined'));
+                    }
+                    break;
+            }
 
         }
 
