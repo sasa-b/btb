@@ -3,16 +3,14 @@
  */
 function UI() {
 
-    this.global = {
-        templates : {
-            set : function (key, html) {
-                this[key] = html;
-            },
-            get : function (key) {
-                return this[key];
-            }
+    this.templates = {
+        set : function (key, tmpl) {
+            this[key] = tmpl;
+        },
+        get : function (key) {
+            return this[key];
         }
-    };
+    }
 
     /**
      * @param name

@@ -1,7 +1,7 @@
 /**
  * Created by sasablagojevic on 3/14/17.
  */
-function Form(selector) {
+function Form(selector, options) {
     var self = this;
     var form = typeof selector !== 'string' ? selector : document.querySelector(selector);
 
@@ -11,11 +11,33 @@ function Form(selector) {
 
     var inputData = {};
 
-    var __construct = function () {
+    this.autoCollect = false;
+
+    this.ajax = new Xhr({
+        contentType: 'application/json',
+        responseType: 'json'
+    });
+
+    var _construct = function (options) {
         inputs = Array.prototype.slice.call(form.getElementsByTagName('input'));
         selects = Array.prototype.slice.call(form.getElementsByTagName('select'));
         textAreas = Array.prototype.slice.call(form.getElementsByTagName('textarea'));
-    }();
+
+        if (options) {
+            if (options.hasOwnProperty('ajax')) {
+                self.ajax = options['ajax'];
+            }
+
+            if (options.hasOwnProperty('autoCollect')) {
+                self.autoCollect = options['autoCollect'];
+                form.addEventListener('submit', function () {
+                    ajax.setAction(options['url'])
+                        .setMethod(options['method'])
+                        .send(self.collect(), options.hasOwnProperty('callback') ? options['callback'] : undefined)
+                });
+            }
+        }
+    }(options);
 
     this.collect = function() {
         inputs.forEach(function (input) {

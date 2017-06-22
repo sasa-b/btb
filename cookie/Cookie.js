@@ -24,5 +24,4 @@ function Cookie() {
             return false;
         }
     }
-
 }

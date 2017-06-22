@@ -251,3 +251,31 @@ function on() {
         el.addEventListener(event, handler);
     }
 }
+
+function getById(id) {
+    return document.getElementById(id);
+}
+
+function getByClass(name, context) {
+    var els = context ? context.getElementsByClassName(name) : document.getElementsByClassName(name);
+    return Array.prototype.slice.call(els);
+}
+
+function getByTag(name, context) {
+    var els = context ? context.getElementsByTagName(name) : document.getElementsByTagName(name);
+    return Array.prototype.slice.call(els);
+}
+
+function getByName(name, context) {
+    var els = context ? context.getElementsByName(name) : document.getElementsByName(name);
+    return Array.prototype.slice.call(els);
+}
+
+function query(selector, context) {
+    return context ? context.querySelector(selector) : document.querySelector(selector);
+}
+
+function queryAll(selector, context) {
+    var els = context ? context.querySelectorAll(selector) : document.querySelector(selector);
+    return Array.prototype.slice.call(els);
+}

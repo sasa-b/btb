@@ -5,14 +5,21 @@
 function Xhr(config) {
     var self = this;
     this.xhr = new XMLHttpRequest();
-    this.contentType = null;
-    this.responseType = null;
+    this.contentType = 'application/json';
+    this.responseType = 'json';
     this.headers = null;
-    var action = '';
-    var formHandler = null;
+    this.csrfFieldName = 'csrf';
+
+    var action = null;
+    var httpMethod = null;
 
     this.setAction = function (url) {
         action = url;
+        return this;
+    }
+
+    this.setMethod = function(method) {
+        httpMethod = method;
         return this;
     }
 
@@ -25,24 +32,23 @@ function Xhr(config) {
             var url = window.location.href;
             url = url.split('/');
             url = url[2];
-            //console.log(url);
-            return 'http://' + url.replace(/\/+$/, '');
+            console.log(url);
+            return url[0] + '/' + url.replace(/\/+$/, '');
         }
-        var url = window.location.href;
-        return url.replace(/\/+$/, '');
+        return window.location.href.replace(/\/+$/, '');
     }
 
     /**
      * @param response
      */
-    this.defaultSuccessResponse = function (response) {
+    this.successMessage = function (response) {
         console.log(response)
     }
 
     /**
      * @param response
      */
-    this.defaultFailedResponse = function (response) {
+    this.failedMessage = function (response) {
         console.log(response)
     }
 
@@ -53,11 +59,11 @@ function Xhr(config) {
      * @returns {boolean}
      */
     this.successResponse = function(response, callback) {
+        this.successMessage(response)
         if (typeof callback !== 'undefined') {
             callback(response)
             return true;
         }
-        this.defaultSuccessResponse(response)
     }
 
     /**
@@ -67,25 +73,24 @@ function Xhr(config) {
      * @returns {boolean}
      */
     this.failedResponse = function(response, callback) {
-        console.log('actually this is called');
+        this.failedMessage(response)
         if (typeof callback !== 'undefined') {
             callback(response)
             return true;
         }
-        this.defaultFailedResponse(response)
     }
 
     this.getCsrfToken = function () {
-        return document.getElementsByName('csrf')[0].value
+        return document.querySelector("input[name="+this.csrfFieldName+"]").value
     }
 
     this.configure = function() {
-        self.xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        if (self.contentType != null) {
-            self.xhr.setRequestHeader("Content-type", self.contentType);
+        this.setHeaders("X-Requested-With", "XMLHttpRequest");
+        if (this.contentType != null) {
+            this.xhr.setRequestHeader("Content-type", this.contentType);
         }
-        self.xhr.setRequestHeader("X-Csrf-Token", self.getCsrfToken());
-        self.xhr.responseType = self.responseType;
+        this.setHeaders("X-Csrf-Token", this.getCsrfToken());
+        this.xhr.responseType = this.responseType;
     }
 
     this.setHeaders = function(key, value) {
@@ -109,14 +114,14 @@ function Xhr(config) {
      * @param password
      */
     this.sendRequest = function(method, url, data, callback, user, password) {
-        self.xhr.open(method, url, true, user, password);
-        self.configure();
+        this.xhr.open(method, url, true, user, password);
+        this.configure();
         if (this.headers != null) {
             for (var key in this.headers) {
                 this.setHeaders(key, this.headers[key]);
             }
         }
-        self.xhr.onreadystatechange = function() {
+        this.xhr.onreadystatechange = function() {
             //startLoadingAnim()
             self.loading();
             switch (self.xhr.readyState) {
@@ -194,12 +199,7 @@ function Xhr(config) {
      * @param data
      * @returns {*}
      */
-    var prepareData = function(data) {
-        if (typeof data === 'undefined' && formHandler) {
-            formHandler.collect();
-            data = formHandler.getData();
-        }
-
+    var prepare = function(data) {
         if (self.contentType.indexOf('json') > -1) {
             data = JSON.stringify(data);
         } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
@@ -210,8 +210,18 @@ function Xhr(config) {
             keyValue = keyValue.join('&');
             data = keyValue;
         }
-
         return data;
+    }
+
+    /**
+     *
+     * @param data
+     * @param callback
+     * @returns {Xhr}
+     */
+    this.send = function(data, callback) {
+        this.sendRequest(httpMethod, action, prepareData(data), callback);
+        return this;
     }
 
     /**
@@ -220,7 +230,7 @@ function Xhr(config) {
      * @param callback
      */
     this.get = function(url, callback) {
-        this.sendRequest("GET", action != '' ? action : url, null, callback);
+        this.sendRequest("GET", action ? action : url, null, callback);
     }
 
     /**
@@ -230,7 +240,7 @@ function Xhr(config) {
      * @param callback
      */
     this.post = function(url, data, callback) {
-        this.sendRequest("POST", action != '' ? action : url, prepareData(data), callback);
+        this.sendRequest("POST", action ? action : url, prepareData(data), callback);
     }
 
     /**
@@ -240,7 +250,7 @@ function Xhr(config) {
      * @param callback
      */
     this.patch = function(url, data, callback) {
-        this.sendRequest("PATCH", action != '' ? action : url, prepareData(data), callback);
+        this.sendRequest("PATCH", action ? action : url, prepareData(data), callback);
     }
 
     /**
@@ -250,7 +260,7 @@ function Xhr(config) {
      * @param callback
      */
     this.put = function(url, data, callback) {
-        this.sendRequest("PUT", action != '' ? action : url, prepareData(data), callback);
+        this.sendRequest("PUT", action ? action : url, prepareData(data), callback);
     }
 
     /**
@@ -259,7 +269,7 @@ function Xhr(config) {
      * @param callback
      */
     this.delete = function(url, callback) {
-        this.sendRequest("DELETE", action != '' ? action : url, null, callback);
+        this.sendRequest("DELETE", action ? action : url, null, callback);
     }
 
     /**
@@ -269,12 +279,9 @@ function Xhr(config) {
      * @param contentType
      * @param responseType
      */
-    var construct = function(config, self) {
+    var _construct = function(config, self) {
         for (var key in config) {
             self[key] = config[key];
-            if (key === 'form') {
-                formHandler = config[key];
-            }
         }
     }(config, this);
 
