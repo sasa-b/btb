@@ -1,2 +1,2 @@
-# ajax
-Wrapper class for XMLHttpRequest object in plain JS
+# btb - Back To Basics
+Collection of classes for handling Cookies, Forms and XMLHttpRequests in plain JS
