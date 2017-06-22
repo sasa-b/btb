@@ -199,7 +199,7 @@ function Xhr(config) {
      * @param data
      * @returns {*}
      */
-    var prepare = function(data) {
+    var serialize = function(data) {
         if (self.contentType.indexOf('json') > -1) {
             data = JSON.stringify(data);
         } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
@@ -220,7 +220,7 @@ function Xhr(config) {
      * @returns {Xhr}
      */
     this.send = function(data, callback) {
-        this.sendRequest(httpMethod, action, prepareData(data), callback);
+        this.sendRequest(httpMethod, action, serialize(data), callback);
         return this;
     }
 
@@ -240,7 +240,7 @@ function Xhr(config) {
      * @param callback
      */
     this.post = function(url, data, callback) {
-        this.sendRequest("POST", action ? action : url, prepareData(data), callback);
+        this.sendRequest("POST", action ? action : url, serialize(data), callback);
     }
 
     /**
@@ -250,7 +250,7 @@ function Xhr(config) {
      * @param callback
      */
     this.patch = function(url, data, callback) {
-        this.sendRequest("PATCH", action ? action : url, prepareData(data), callback);
+        this.sendRequest("PATCH", action ? action : url, serialize(data), callback);
     }
 
     /**
@@ -260,7 +260,7 @@ function Xhr(config) {
      * @param callback
      */
     this.put = function(url, data, callback) {
-        this.sendRequest("PUT", action ? action : url, prepareData(data), callback);
+        this.sendRequest("PUT", action ? action : url, serialize(data), callback);
     }
 
     /**
