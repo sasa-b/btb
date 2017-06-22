@@ -13,29 +13,35 @@ function Xhr(config) {
     var action = null;
     var httpMethod = null;
 
+    /**
+     *
+     * @param string url
+     * @returns {Xhr}
+     */
     this.setAction = function (url) {
         action = url;
         return this;
     }
 
+    /**
+     *
+     * @param method
+     * @returns {Xhr}
+     */
     this.setMethod = function(method) {
         httpMethod = method;
         return this;
     }
 
     /**
-     * @param base
+     * @param bool base
      * @returns {string}
      */
-    this.url = function(base) {
-        if (typeof base !== 'undefined') {
-            var url = window.location.href;
+    this.baseUrl = function() {
+        var url = window.location.href;
             url = url.split('/');
-            url = url[2];
-            console.log(url);
-            return url[0] + '/' + url.replace(/\/+$/, '');
-        }
-        return window.location.href.replace(/\/+$/, '');
+            url = url[0] + '//' + url[2];
+        return url.replace(/\/+$/, '');
     }
 
     /**
@@ -114,6 +120,10 @@ function Xhr(config) {
      * @param password
      */
     this.sendRequest = function(method, url, data, callback, user, password) {
+        if (url.indexOf('http') <= -1) {
+            url = this.baseUrl() + url;
+        }
+
         this.xhr.open(method, url, true, user, password);
         this.configure();
         if (this.headers != null) {
@@ -200,6 +210,7 @@ function Xhr(config) {
      * @returns {*}
      */
     var serialize = function(data) {
+        console.log(data);
         if (self.contentType.indexOf('json') > -1) {
             data = JSON.stringify(data);
         } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
@@ -240,6 +251,9 @@ function Xhr(config) {
      * @param callback
      */
     this.post = function(url, data, callback) {
+        if (arguments.length < 2) {
+            data = url;
+        }
         this.sendRequest("POST", action ? action : url, serialize(data), callback);
     }
 
@@ -250,6 +264,9 @@ function Xhr(config) {
      * @param callback
      */
     this.patch = function(url, data, callback) {
+        if (arguments.length < 2) {
+            data = url;
+        }
         this.sendRequest("PATCH", action ? action : url, serialize(data), callback);
     }
 
@@ -260,6 +277,9 @@ function Xhr(config) {
      * @param callback
      */
     this.put = function(url, data, callback) {
+        if (arguments.length < 2) {
+            data = url;
+        }
         this.sendRequest("PUT", action ? action : url, serialize(data), callback);
     }
 
