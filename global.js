@@ -215,6 +215,11 @@ function onChange(el, context, handler) {
  * @param handler
  */
 function onCheck(el, context, handler) {
+    var hasContext = typeof handler === 'undefined';
+
+    if (hasContext) {
+        handler = context;
+    }
 
     var check = function (e) {
         if (this.hasAttribute('checked')) {
@@ -227,8 +232,7 @@ function onCheck(el, context, handler) {
         handler(e, this);
     }
 
-    if (typeof handler === 'undefined') {
-        handler = context;
+    if (hasContext) {
         on('click', el, check);
     } else {
         on('click', el, context, check);
@@ -267,8 +271,8 @@ function on() {
     }
 
     if ((event && event.constructor === Array) || (Array.isArray && Array.isArray(event))) {
-        event.forEach(function (event) {
-            el.addEventListener(event, handler);
+        event.forEach(function (e) {
+            el.addEventListener(e, handler);
         });
     } else {
         el.addEventListener(event, handler);
@@ -334,6 +338,6 @@ function query(selector, context) {
  * @returns {*}
  */
 function queryAll(selector, context) {
-    var els = context ? context.querySelectorAll(selector) : document.querySelector(selector);
+    var els = context ? context.querySelectorAll(selector) : document.querySelectorAll(selector);
     return Array.prototype.slice.call(els);
 }
