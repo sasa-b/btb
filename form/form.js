@@ -5,6 +5,10 @@ function Form(selector, options) {
     var self = this;
     var el = typeof selector !== 'string' ? selector : document.querySelector(selector);
 
+    if (el == null || el == undefined) {
+        throw Error("Form [element] is undefined");
+    }
+
     var inputs = [];
     var selects = [];
     var textAreas = [];
@@ -56,7 +60,7 @@ function Form(selector, options) {
         if (self.autoCollect) {
             el.addEventListener('submit', function (e) {
                 e.preventDefault();
-                self.ajax.send(self.collect().data())
+                self.ajax.send(self.collect().data());
             });
         }
     }(options);
@@ -97,6 +101,51 @@ function Form(selector, options) {
         return this;
     }
 
+    /**
+     *
+     * @param object data
+     * @returns {Form}
+     */
+    this.merge = function (data) {
+        if (typeof data !== 'object') {
+            throw new Error('Param [data] needs to be an [object]');
+        }
+
+        if (data.length > 0) {
+            for (var key in data) {
+                inputData[key] = data[key];
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     *
+     * @param object data
+     * @returns {Form}
+     */
+    this.append = function (data) {
+        if (typeof data !== 'object') {
+            throw new Error('Param [data] needs to be an [object]');
+        }
+
+        if (data.length > 0) {
+            for (var key in data) {
+                if (!inputData.hasOwnProperty(key)) {
+                    inputData[key] = data[key];
+                }
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     *
+     * @param stringified
+     * @returns {{}}
+     */
     this.data = function (stringified) {
         if (typeof stringified !== 'undefined' && (stringified === true || stringified == 'json')) {
             return JSON.stringify(inputData)

@@ -8,7 +8,7 @@ function Xhr(config) {
     this.contentType = 'application/json';
     this.responseType = 'json';
     this.headers = null;
-    this.csrfFieldName = 'csrf';
+    this.tokenFieldName = 'csrf';
 
     var action = null;
     var httpMethod = null;
@@ -87,7 +87,7 @@ function Xhr(config) {
     }
 
     this.getCsrfToken = function () {
-        return document.querySelector("input[name="+this.csrfFieldName+"]").value
+        return document.querySelector("input[name="+this.tokenFieldName+"]").value
     }
 
     this.configure = function() {
@@ -99,6 +99,11 @@ function Xhr(config) {
         this.xhr.responseType = this.responseType;
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     */
     this.setHeaders = function(key, value) {
         self.xhr.setRequestHeader(key, value);
     }

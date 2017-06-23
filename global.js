@@ -170,19 +170,31 @@ function slideOut(element, direction, time, offset) {
     }, time + 10);
 }
 
+/**
+ *
+ * @param el
+ * @param context
+ * @param handler
+ */
 function onClick(el, context, handler) {
     if (typeof handler === 'undefined') {
         handler = context;
-        on('click', el, el, function (e) {
+        on('click', el, function (e) {
             handler(e, this);
         });
     } else {
-        on('click', el, context, el, function (e) {
+        on('click', el, context, function (e) {
             handler(e, this);
         });
     }
 }
 
+/**
+ *
+ * @param el
+ * @param context
+ * @param handler
+ */
 function onChange(el, context, handler) {
     if (typeof handler === 'undefined') {
         handler = context;
@@ -190,12 +202,18 @@ function onChange(el, context, handler) {
             handler(e, this);
         });
     } else {
-        on('change', el, context, el, function (e) {
+        on('change', el, context, function (e) {
             handler(e, this);
         });
     }
 }
 
+/**
+ *
+ * @param el
+ * @param context
+ * @param handler
+ */
 function onCheck(el, context, handler) {
 
     var check = function (e) {
@@ -217,6 +235,11 @@ function onCheck(el, context, handler) {
     }
 }
 
+/**
+ * @param el
+ * @param context|handler
+ * @param handler
+ */
 function on() {
     var argLen = arguments.length;
 
@@ -252,29 +275,64 @@ function on() {
     }
 }
 
+/**
+ *
+ * @param id
+ * @returns {Element}
+ */
 function getById(id) {
     return document.getElementById(id);
 }
 
+/**
+ *
+ * @param name
+ * @param context
+ * @returns {*}
+ */
 function getByClass(name, context) {
     var els = context ? context.getElementsByClassName(name) : document.getElementsByClassName(name);
     return Array.prototype.slice.call(els);
 }
 
+/**
+ *
+ * @param name
+ * @param context
+ * @returns {*}
+ */
 function getByTag(name, context) {
     var els = context ? context.getElementsByTagName(name) : document.getElementsByTagName(name);
     return Array.prototype.slice.call(els);
 }
 
+/**
+ *
+ * @param name
+ * @param context
+ * @returns {*}
+ */
 function getByName(name, context) {
     var els = context ? context.getElementsByName(name) : document.getElementsByName(name);
     return Array.prototype.slice.call(els);
 }
 
+/**
+ *
+ * @param selector
+ * @param context
+ * @returns {*}
+ */
 function query(selector, context) {
     return context ? context.querySelector(selector) : document.querySelector(selector);
 }
 
+/**
+ *
+ * @param selector
+ * @param context
+ * @returns {*}
+ */
 function queryAll(selector, context) {
     var els = context ? context.querySelectorAll(selector) : document.querySelector(selector);
     return Array.prototype.slice.call(els);
