@@ -31,14 +31,6 @@ function Form(selector, options) {
         selects = Array.prototype.slice.call(el.getElementsByTagName('select'));
         textAreas = Array.prototype.slice.call(el.getElementsByTagName('textarea'));
 
-        if (el.hasAttribute('action')) {
-            self.ajax.setAction(el.getAttribute('action'));
-        }
-
-        if (el.hasAttribute('method')) {
-            self.ajax.setMethod(el.getAttribute('method'));
-        }
-
         if (options) {
             if (options.hasOwnProperty('ajax')) {
                 self.ajax = options['ajax'];
@@ -57,9 +49,18 @@ function Form(selector, options) {
             }
         }
 
+        if (el.hasAttribute('action')) {
+            self.ajax.setAction(el.getAttribute('action'));
+        }
+
+        if (el.hasAttribute('method')) {
+            self.ajax.setMethod(el.getAttribute('method'));
+        }
+
         if (self.autoCollect) {
             el.addEventListener('submit', function (e) {
                 e.preventDefault();
+                console.log(self.ajax.getAction());
                 self.ajax.send(self.collect().data());
             });
         }

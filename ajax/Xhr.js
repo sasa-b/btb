@@ -33,6 +33,14 @@ function Xhr(config) {
         return this;
     }
 
+    this.getMethod = function () {
+        return httpMethod;
+    }
+
+    this.getAction = function() {
+        return action;
+    }
+
     /**
      * @param bool base
      * @returns {string}
@@ -125,6 +133,10 @@ function Xhr(config) {
      * @param password
      */
     this.sendRequest = function(method, url, data, callback, user, password) {
+        if (action === null && url === undefined) {
+            throw new Error("No [action/url] defined.");
+        }
+
         if (url.indexOf('http') <= -1) {
             url = this.baseUrl() + url;
         }
