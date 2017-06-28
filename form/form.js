@@ -60,7 +60,6 @@ function Form(selector, options) {
         if (self.autoCollect) {
             el.addEventListener('submit', function (e) {
                 e.preventDefault();
-                console.log(self.ajax.getAction());
                 self.ajax.send(self.collect().data());
             });
         }
@@ -112,10 +111,8 @@ function Form(selector, options) {
             throw new Error('Param [data] needs to be an [object]');
         }
 
-        if (data.length > 0) {
-            for (var key in data) {
-                inputData[key] = data[key];
-            }
+        for (var key in data) {
+            inputData[key] = data[key];
         }
 
         return this;
@@ -131,11 +128,9 @@ function Form(selector, options) {
             throw new Error('Param [data] needs to be an [object]');
         }
 
-        if (data.length > 0) {
-            for (var key in data) {
-                if (!inputData.hasOwnProperty(key)) {
-                    inputData[key] = data[key];
-                }
+        for (var key in data) {
+            if (!inputData.hasOwnProperty(key)) {
+                inputData[key] = data[key];
             }
         }
 
