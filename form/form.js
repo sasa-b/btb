@@ -163,35 +163,39 @@ function Form(selector, options) {
             throw new Error("Filters need to be an [object]");
         }
 
-        var data = {};
+        var data = rawInput;
 
-        if (filter && filter.hasOwnProperty('only')) {
-           var i = 0;
-           var l = filter.only.length;
+        if (filter) {
+            var data = {};
+            if (filter.hasOwnProperty('only')) {
+                var i = 0;
+                var l = filter.only.length;
 
-           while (i < l) {
-               data[filter.except[i]] = rawInput[filter.except[i]];
-               i++;
-           }
-        }
-
-        if (filter && filter.hasOwnProperty('except')) {
-            var i = 0;
-            var l = filter.except.length;
-
-            while (i < l) {
-                for (var name in rawInput) {
-                    if (name != filter.except[i]) {
-                        data[name] = rawInput[name];
-                    }
+                while (i < l) {
+                    data[filter.except[i]] = rawInput[filter.except[i]];
+                    i++;
                 }
-                i++;
+            }
+
+            if (filter.hasOwnProperty('except')) {
+                var i = 0;
+                var l = filter.except.length;
+
+                while (i < l) {
+                    for (var name in rawInput) {
+                        if (name != filter.except[i]) {
+                            data[name] = rawInput[name];
+                        }
+                    }
+                    i++;
+                }
             }
         }
 
         if (typeof stringified !== 'undefined' && (stringified === true || stringified == 'json')) {
             return JSON.stringify(data)
         }
+
         return data;
     }
 
