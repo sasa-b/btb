@@ -13,9 +13,11 @@ function Form(selector, options) {
     var selects = [];
     var textAreas = [];
 
-    var inputData = {};
+    var rawInput = {};
 
     this.autoCollect = true;
+
+    this.filter = null;
 
     this.ajax = new Xhr({
         contentType: 'application/json',
@@ -47,6 +49,10 @@ function Form(selector, options) {
             if (options.hasOwnProperty('autoCollect')) {
                 self.autoCollect = options['autoCollect'];
             }
+
+            if (options.hasOwnProperty('filter')) {
+                self.filter = options['filter'];
+            }
         }
 
         if (el.hasAttribute('action')) {
@@ -60,6 +66,12 @@ function Form(selector, options) {
         if (self.autoCollect) {
             el.addEventListener('submit', function (e) {
                 e.preventDefault();
+
+                if (self.filter) {
+                    self.ajax.send(self.collect().data(self.filter));
+                    return false;
+                }
+
                 self.ajax.send(self.collect().data());
             });
         }
@@ -70,32 +82,32 @@ function Form(selector, options) {
             if (input.type == 'checkbox' || input.type == 'radio') {
 
                 if (input.hasAttribute('checked')) {
-                    inputData[input.getAttribute('name')] = input.value;
+                    rawInput[input.getAttribute('name')] = input.value;
                 }
 
             } else if (input.type == 'file') {
                 var l = input.files.length;
 
                 if (l == 1) {
-                    inputData[input.getAttribute('name')] = input.files[0];
+                    rawInput[input.getAttribute('name')] = input.files[0];
                 } else if (l > 1) {
-                    inputData[input.getAttribute('name')] = [];
+                    rawInput[input.getAttribute('name')] = [];
                     for (var i = 0; i < l; i++) {
-                        inputData.push(input.files[i]);
+                        rawInput.push(input.files[i]);
                     }
                 }
 
             } else {
-                inputData[input.getAttribute('name')] = input.value;
+                rawInput[input.getAttribute('name')] = input.value;
             }
         });
 
         selects.forEach(function (select) {
-            inputData[select.getAttribute('name')] = select.value
+            rawInput[select.getAttribute('name')] = select.value
         });
 
         textAreas.forEach(function (textArea) {
-            inputData[textArea.getAttribute('name')] = textArea.value;
+            rawInput[textArea.getAttribute('name')] = textArea.value;
         });
 
         return this;
@@ -112,7 +124,7 @@ function Form(selector, options) {
         }
 
         for (var key in data) {
-            inputData[key] = data[key];
+            rawInput[key] = data[key];
         }
 
         return this;
@@ -129,8 +141,8 @@ function Form(selector, options) {
         }
 
         for (var key in data) {
-            if (!inputData.hasOwnProperty(key)) {
-                inputData[key] = data[key];
+            if (!rawInput.hasOwnProperty(key)) {
+                rawInput[key] = data[key];
             }
         }
 
@@ -138,15 +150,49 @@ function Form(selector, options) {
     }
 
     /**
-     *
+     * @param filter
+     * {
+     *  only: [],
+     *  except: []
+     * }
      * @param stringified
      * @returns {{}}
      */
-    this.data = function (stringified) {
-        if (typeof stringified !== 'undefined' && (stringified === true || stringified == 'json')) {
-            return JSON.stringify(inputData)
+    this.data = function (filter, stringified) {
+        if (filter && typeof filter !== 'object') {
+            throw new Error("Filters need to be an [object]");
         }
-        return inputData;
+
+        var data = {};
+
+        if (filter && filter.hasOwnProperty('only')) {
+           var i = 0;
+           var l = filter.only.length;
+
+           while (i < l) {
+               data[filter.except[i]] = rawInput[filter.except[i]];
+               i++;
+           }
+        }
+
+        if (filter && filter.hasOwnProperty('except')) {
+            var i = 0;
+            var l = filter.except.length;
+
+            while (i < l) {
+                for (var name in rawInput) {
+                    if (name != filter.except[i]) {
+                        data[name] = rawInput[name];
+                    }
+                }
+                i++;
+            }
+        }
+
+        if (typeof stringified !== 'undefined' && (stringified === true || stringified == 'json')) {
+            return JSON.stringify(data)
+        }
+        return data;
     }
 
 }
