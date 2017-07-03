@@ -163,7 +163,7 @@ function Form(selector, options) {
             throw new Error("Filters need to be an [object]");
         }
 
-        var data = rawInput;
+        var filteredData = rawInput;
 
         if (filter) {
             var data = {};
@@ -172,7 +172,7 @@ function Form(selector, options) {
                 var l = filter.only.length;
 
                 while (i < l) {
-                    data[filter.except[i]] = rawInput[filter.except[i]];
+                    data[filter.only[i]] = rawInput[filter.only[i]];
                     i++;
                 }
             }
@@ -181,14 +181,12 @@ function Form(selector, options) {
                 var i = 0;
                 var l = filter.except.length;
 
+                data = rawInput;
                 while (i < l) {
-                    for (var name in rawInput) {
-                        if (name != filter.except[i]) {
-                            data[name] = rawInput[name];
-                        }
-                    }
+                   delete data[filter.except[i]];
                     i++;
                 }
+
             }
         }
 
