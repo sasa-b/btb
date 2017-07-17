@@ -75,7 +75,7 @@ function Xhr(config) {
     this.successResponse = function(response, callback) {
         this.successMessage(response)
         if (typeof callback !== 'undefined') {
-            callback(response)
+            callback(response, this.xhr.status);
             return true;
         }
     }
@@ -89,7 +89,7 @@ function Xhr(config) {
     this.failedResponse = function(response, callback) {
         this.failedMessage(response)
         if (typeof callback !== 'undefined') {
-            callback(response)
+            callback(response, this.xhr.status);
             return true;
         }
     }

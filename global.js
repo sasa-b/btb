@@ -22,9 +22,15 @@ window.getChild = function (el, type) {
 window.createNode = function (element, attributes) {
 
     if (element.indexOf('<') > -1) {
-        var placeholder = document.createElement('div');
-        placeholder.innerHTML = element;
-        var el = placeholder.children[0];
+        if (element.indexOf('tr') > -1) {
+            var placeholder = document.createElement('table');
+                placeholder.innerHTML = element;
+            var el = placeholder.rows[0];
+        } else {
+            var placeholder = document.createElement('div');
+                placeholder.innerHTML = element;
+            var el = placeholder.children[0];
+        }
     } else {
         var el = document.createElement(element);
     }
@@ -48,36 +54,6 @@ window.round = function(number, precision) {
 function ucfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-
-//< FORMAT DATE
-function formatDate(date, time) {
-    if (typeof date === 'string') {
-
-        var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 && navigator.userAgent && !navigator.userAgent.match('CriOS');
-        if (isSafari) {
-            date = date.replace(/-/g, '/');
-        }
-
-        date = new Date(date);
-    }
-    var dateMonth = date.getMonth() + 1;
-
-    function addZero(i) {
-        if (i < 10) {
-            i = "0" + i;
-        }
-        return i;
-    }
-
-    if (time == true) {
-        var h = addZero(date.getHours());
-        var m = addZero(date.getMinutes());
-        //var s = addZero(date.getSeconds());
-        return date.getDate()+'.'+addZero(dateMonth)+'.' +date.getFullYear()+'. '+h+':'+m;
-    }
-    return date.getDate()+'.'+addZero(dateMonth)+'.'+date.getFullYear()+'.';
-}
-//>
 
 function fadeIn(element, time, display) {
     if (typeof element === 'string') {
@@ -240,22 +216,26 @@ function onCheck(el, context, handler) {
 }
 
 /**
+ * @param string event
  * @param el
- * @param context|handler
+ * @param context
  * @param handler
+ * @param options
  */
 function on() {
     var argLen = arguments.length;
 
     var event = arguments[0];
 
-    if (argLen > 3) {
+    if (argLen > 3 && typeof arguments[4] !== 'object' && typeof arguments[4] !== 'boolean') {
         var el = arguments[1];
         var context = arguments[2];
         var handler = arguments[3];
+        var options = arguments[4];
     } else {
         var el = arguments[1];
         var handler = arguments[2];
+        var options = arguments[3];
     }
 
     if (typeof el === 'string') {
@@ -271,11 +251,11 @@ function on() {
     }
 
     if ((event && event.constructor === Array) || (Array.isArray && Array.isArray(event))) {
-        event.forEach(function (e) {
-            el.addEventListener(e, handler);
+        event.forEach(function (event) {
+            el.addEventListener(event, handler, options !== undefined ? options : false);
         });
     } else {
-        el.addEventListener(event, handler);
+        el.addEventListener(event, handler, options !== undefined ? options : false);
     }
 }
 
@@ -340,4 +320,17 @@ function query(selector, context) {
 function queryAll(selector, context) {
     var els = context ? context.querySelectorAll(selector) : document.querySelectorAll(selector);
     return Array.prototype.slice.call(els);
+}
+
+/**
+ *
+ * @param el
+ * @param className
+ * @returns {boolean}
+ */
+function hasClass(el, className) {
+    if (el.className.indexOf(className) > -1) {
+        return true;
+    }
+    return false;
 }
