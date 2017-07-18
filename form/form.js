@@ -149,7 +149,7 @@ function Form(selector, options) {
         return this;
     }
 
-    /**
+     /**
      * @param filter
      * {
      *  only: [],
@@ -163,10 +163,10 @@ function Form(selector, options) {
             throw new Error("Filters need to be an [object]");
         }
 
-        var filteredData = rawInput;
+        var data = rawInput;
 
         if (filter) {
-            var data = {};
+            data = {};
             if (filter.hasOwnProperty('only')) {
                 var i = 0;
                 var l = filter.only.length;
