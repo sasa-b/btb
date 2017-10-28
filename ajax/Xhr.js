@@ -227,17 +227,18 @@ function Xhr(config) {
      * @returns {*}
      */
     var serialize = function(data) {
-        console.log(data);
-        if (self.contentType && self.contentType.indexOf('json') > -1) {
-            data = JSON.stringify(data);
-        } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
-            var keyValue = [];
-            for (var key in data) {
-                keyValue.push(key+"="+data[key]);
+        if (self.contentType) {
+            if (self.contentType && self.contentType.indexOf('json') > -1) {
+                data = JSON.stringify(data);
+            } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
+                var keyValue = [];
+                for (var key in data) {
+                    keyValue.push(key+"="+data[key]);
+                }
+                keyValue = keyValue.join('&');
+                data = keyValue;
             }
-            keyValue = keyValue.join('&');
-            data = keyValue;
-        }
+        }    
         return data;
     }
 
