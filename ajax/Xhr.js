@@ -227,7 +227,7 @@ function Xhr(config) {
      * @returns {*}
      */
     var serialize = function(data) {
-        if (self.contentType) {
+         if (self.contentType) {
             if (self.contentType && self.contentType.indexOf('json') > -1) {
                 data = JSON.stringify(data);
             } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
@@ -238,7 +238,13 @@ function Xhr(config) {
                 keyValue = keyValue.join('&');
                 data = keyValue;
             }
-        }    
+        } else {
+            var fData = new FormData();
+            for (var key in data) {
+                fData.append(key, data[key]);
+            }
+            data = fData;
+        }
         return data;
     }
 
