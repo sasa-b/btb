@@ -8,7 +8,7 @@ function Xhr(config) {
     this.contentType = 'application/json';
     this.responseType = 'json';
     this.headers = null;
-    this.tokenFieldName = 'csrf';
+    this.tokenFieldName = '_token';
 
     var action = null;
     var httpMethod = null;
