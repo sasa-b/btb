@@ -228,7 +228,7 @@ function Xhr(config) {
      */
     var serialize = function(data) {
         console.log(data);
-        if (self.contentType.indexOf('json') > -1) {
+        if (self.contentType && self.contentType.indexOf('json') > -1) {
             data = JSON.stringify(data);
         } else if (self.contentType.indexOf('x-www-form-urlencoded') > -1) {
             var keyValue = [];
