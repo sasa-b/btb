@@ -303,9 +303,6 @@ function Xhr(config) {
     }
 
     /**
-     * private constructor (zbog var)
-     * mora biti na dnu da bi se mogle overwrite sve metode
-     *
      * @param contentType
      * @param responseType
      */
