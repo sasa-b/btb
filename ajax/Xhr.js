@@ -73,11 +73,11 @@ function Xhr(config) {
      * @returns {boolean}
      */
     this.successResponse = function(response, callback) {
-        this.successMessage(response)
         if (typeof callback !== 'undefined') {
             callback(response, this.xhr.status);
             return true;
         }
+        this.successMessage(response);
     }
 
     /**
@@ -87,11 +87,11 @@ function Xhr(config) {
      * @returns {boolean}
      */
     this.failedResponse = function(response, callback) {
-        this.failedMessage(response)
         if (typeof callback !== 'undefined') {
             callback(response, this.xhr.status);
             return true;
         }
+        this.failedMessage(response);
     }
 
     this.getCsrfToken = function () {
