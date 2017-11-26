@@ -2,7 +2,7 @@
  * Created by sasablagojevic on 3/14/17.
  */
 function Form(selector, options) {
-    var self = this;
+     var self = this;
     var el = typeof selector !== 'string' ? selector : document.querySelector(selector);
 
     if (el == null || el == undefined) {
@@ -19,16 +19,23 @@ function Form(selector, options) {
 
     this.filter = null;
 
+    this.onSubmit = function (form) {
+
+    };
+
     this.ajax = new Xhr({
         contentType: 'application/json',
         responseType: 'json'
     });
 
-    this.element = function() {
+    this.element = function(selector) {
+        if (selector) {
+            el = document.querySelector(selector);
+        }
         return el;
     }
 
-    var _construct = function (options) {
+    (function (options) {
         inputs = Array.prototype.slice.call(el.getElementsByTagName('input'));
         selects = Array.prototype.slice.call(el.getElementsByTagName('select'));
         textAreas = Array.prototype.slice.call(el.getElementsByTagName('textarea'));
@@ -64,9 +71,12 @@ function Form(selector, options) {
         }
 
         if (self.autoCollect) {
+
             el.addEventListener('submit', function (e) {
                 e.preventDefault();
 
+                self.onSubmit(self);
+                
                 if (self.filter) {
                     self.ajax.send(self.collect().data(self.filter));
                     return false;
@@ -75,7 +85,7 @@ function Form(selector, options) {
                 self.ajax.send(self.collect().data());
             });
         }
-    }(options);
+    }(options))
 
     this.collect = function() {
         inputs.forEach(function (input) {
@@ -196,6 +206,5 @@ function Form(selector, options) {
 
         return data;
     }
-
 }
 
